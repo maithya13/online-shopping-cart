@@ -1,0 +1,60 @@
+// Function to calculate the total price with optional tax
+double calculateTotal(List<double> prices, {double tax = 0.0}) {
+  double total = prices.reduce((a, b) => a + b);
+  return total + (total * tax);
+}
+
+// Anonymous function to filter out items below a certain price
+List<double> filterItems(List<double> prices, double threshold) {
+  return prices.where((price) => price >= threshold).toList();
+}
+
+// Higher-order function to apply a discount function to each item
+List<double> applyDiscount(List<double> prices, double Function(double) discountFunction) {
+  return prices.map(discountFunction).toList();
+}
+
+// Recursive function to calculate the factorial discount
+double calculateFactorialDiscount(int itemsCount) {
+  // Base case: If there is only one item, the factorial is 1
+  if (itemsCount == 1) {
+    return 1;
+  }
+  // Recursive case: Multiply the current number by the factorial of the previous number
+  return itemsCount * calculateFactorialDiscount(itemsCount - 1);
+}
+
+void main() {
+  // Sample item prices
+  List<double> prices = [12.99, 8.49, 15.0, 7.99, 5.99, 20.0];
+
+  // Threshold for filtering items under $10
+  double priceThreshold = 10.0;
+
+  // Apply the anonymous function to filter out items below $10
+  List<double> filteredItems = filterItems(prices, priceThreshold);
+  print('Filtered items (above \$10): $filteredItems');
+
+  // Function to apply a 10% discount to each item
+  double applyTenPercentDiscount(double price) {
+    return price * 0.90;  // Apply 10% discount
+  }
+
+  // Apply a discount using the higher-order function
+  List<double> discountedItems = applyDiscount(filteredItems, applyTenPercentDiscount);
+  print('Items after applying 10% discount: $discountedItems');
+
+  // Calculate the total price with a 5% tax
+  double tax = 0.05;
+  double totalPrice = calculateTotal(discountedItems, tax: tax);
+  print('Total price with tax: \$${totalPrice.toStringAsFixed(2)}');
+
+  // Calculate the factorial discount based on the number of items
+  int itemsCount = discountedItems.length;
+  double factorialDiscount = calculateFactorialDiscount(itemsCount);
+  print('Factorial discount for $itemsCount items: $factorialDiscount%');
+
+  // Apply the factorial discount to the total price
+  double finalPrice = totalPrice - (totalPrice * (factorialDiscount / 100));
+  print('Final price after factorial discount: \$${finalPrice.toStringAsFixed(2)}');
+}
